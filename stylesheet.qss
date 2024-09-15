@@ -1,0 +1,99 @@
+/* Set the default background color for all widgets */
+QWidget {
+    background-color: #87CEEB; /* Sky blue */
+    background-image: url("C:/Users/Siphiwe/Downloads/orgmyorg3.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #fff; /* White text */
+}
+
+/* Style for QPushButton */
+QPushButton {
+    background-color: #4682B4; /* Steel blue */
+    color: #fff; /* White text */
+    border: 1px solid #1E90FF; /* Dodger blue border */
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 80px; 
+    max-width: 150px; 
+}
+
+QPushButton:hover {
+    color: #87CEEB; /* Sky blue on hover */
+}
+
+QPushButton:pressed {
+    color: #4169E1; /* Royal blue on press */
+    font-weight: bold; /* Bold text */
+    min-width: 120px; 
+
+
+}
+
+/* Style for QLabel */
+QLabel {
+    color: #fff; /* White text */
+    font-weight: bold; /* Bold text */
+
+}
+
+/* Style for QLineEdit */
+QLineEdit {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Style for QTextEdit */
+QTextEdit {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Style for QComboBox */
+QComboBox {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+QComboBox::drop-down {
+    border-left: 1px solid #B0C4DE; /* Light steel blue */
+}
+
+/* Style for QScrollBar */
+QScrollBar:horizontal {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    background: #E6E6FA; /* Lavender */
+    height: 15px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #B0C4DE; /* Light steel blue */
+    border-radius: 5px;
+}
+
+QScrollBar::add-line:horizontal {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    background: #E6E6FA; /* Lavender */
+}
+
+QScrollBar::sub-line:horizontal {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    background: #E6E6FA; /* Lavender */
+}
+
+/* Style for QStackedWidget */
+QStackedWidget {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+    border-radius: 5px;
+}
+
+/* Style for QMainWindow */
+QMainWindow {
+    border: 1px solid #B0C4DE; /* Light steel blue */
+}
