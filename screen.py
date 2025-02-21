@@ -8,14 +8,14 @@ from sqlalchemy.orm import sessionmaker
 from models import Event, get_all_events, get_event_by_name, get_event_by_date
 from models import Member, Demographics, get_all_members, get_member_by_names, get_member_by_email
 from models import married_members, children_query, uneducated_members, disabled_members, office_bearers
-from daily_tasks import send_reminders  # Import the function for sending reminders
+from daily_tasks import send_reminders  # function for sending reminders
 from sqlalchemy.exc import SQLAlchemyError
 
 
 # Configure logging
 logging.basicConfig(
     filename='church_management.log',  # Log file
-    level=logging.ERROR,               # Log level (you can set to INFO or DEBUG for more verbosity)
+    level=logging.ERROR,  # Log level (you can set to INFO or DEBUG for more verbosity)
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -105,29 +105,29 @@ class EventsOperations(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
         
 
-        ### search results are displayed here  ###
+        """ search results are displayed here  """
         # no label
         # text areas to display responses
         self.event_count_label = QtWidgets.QLabel('Number of events: ', self)
-        self.event_count_label.setStyleSheet("font-size: 16px;")                              # no need to make it stand out
-        self.event_count_label.setStyleSheet("background-color: white;")                # Set background to white NOT WORKING, ADJUST .qss file
+        self.event_count_label.setStyleSheet("font-size: 16px;")  # no need to make it stand out
+        self.event_count_label.setStyleSheet("background-color: white;")  # Set background to white NOT WORKING, ADJUST .qss file
         self.layout.addWidget(self.event_count_label, alignment=QtCore.Qt.AlignCenter)
         
         self.event_details_text_edit = QtWidgets.QTextEdit(self)
         self.event_details_text_edit.setReadOnly(True)
-        self.event_details_text_edit.setStyleSheet("background-color: white;")                # Set background to white NOT WORKING, ADJUST .qss file
+        self.event_details_text_edit.setStyleSheet("background-color: white;")  # Set background to white NOT WORKING, ADJUST .qss file
         self.event_details_text_edit.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout.addWidget(self.event_details_text_edit, alignment=QtCore.Qt.AlignCenter)
 
-        ### event search operations ###
+        """ event search operations """
         # label 1
         self.first_section_label = QtWidgets.QLabel('Event Search', self)
-        self.first_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")           # Make it stand out
-        self.first_section_label.setAlignment(QtCore.Qt.AlignCenter)                            # Center the text
+        self.first_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")  # Make it stand out
+        self.first_section_label.setAlignment(QtCore.Qt.AlignCenter)  # Center the text
         self.layout.addWidget(self.first_section_label, alignment=QtCore.Qt.AlignCenter)
 
         # buttons
-        button_layout = QtWidgets.QHBoxLayout()                                                 # 
+        button_layout = QtWidgets.QHBoxLayout()                                                  
 
         # searches
         self.show_all_e_button = QtWidgets.QPushButton('Show All Events', self)
@@ -141,17 +141,17 @@ class EventsOperations(QtWidgets.QWidget):
         button_layout.addWidget(self.search_e_by_name_button)
 
         self.search_e_by_date_button = QtWidgets.QPushButton('Search Events By Date', self)
-        self.search_e_by_date_button.setMinimumWidth(150)                                        # Ensure the button is wide enough
+        self.search_e_by_date_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.search_e_by_date_button.clicked.connect(self.search_e_by_date)
         button_layout.addWidget(self.search_e_by_date_button)
 
         self.layout.addLayout(button_layout)          
 
-        ## Event CRUD Operation ##
+        """ Event CRUD Operation """
         # label2
         self.sec_section_label = QtWidgets.QLabel('Add/Delete/Edit Events', self)
-        self.sec_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")           # Make it stand out
-        self.sec_section_label.setAlignment(QtCore.Qt.AlignCenter)                            # Center the text
+        self.sec_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")  # Make it stand out
+        self.sec_section_label.setAlignment(QtCore.Qt.AlignCenter)  # Center the text
         self.layout.addWidget(self.sec_section_label, alignment=QtCore.Qt.AlignCenter)
 
         # buttons
@@ -159,17 +159,17 @@ class EventsOperations(QtWidgets.QWidget):
 
         # one-clicks
         self.add_e_button = QtWidgets.QPushButton('Add an Event', self)
-        self.add_e_button.setMinimumWidth(150)                                                   # Ensure the button is wide enough
+        self.add_e_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.add_e_button.clicked.connect(self.add_event)
         button_layout2.addWidget(self.add_e_button)
 
         self.remove_e_button = QtWidgets.QPushButton('Remove an Event', self)
-        self.remove_e_button.setMinimumWidth(150)                                        # Ensure the button is wide enough
+        self.remove_e_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.remove_e_button.clicked.connect(self.remove_event)
         button_layout2.addWidget(self.remove_e_button)
 
         self.edit_e_button = QtWidgets.QPushButton('Edit an Event', self)
-        self.edit_e_button.setMinimumWidth(150)                                             # Ensure the button is wide enough
+        self.edit_e_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.edit_e_button.clicked.connect(self.edit_event)
         button_layout2.addWidget(self.edit_e_button)
 
@@ -183,29 +183,29 @@ class EventsOperations(QtWidgets.QWidget):
 
         self.setLayout(self.layout)
 
-    # functions
+    """ functions """
 
     def show_all_events(self):
         try:
-            events, count = get_all_events()                                                  # the function returns two things: member list and count
+            events, count = get_all_events()  # the function returns two things: member list and count
             self.event_count_label.setText(f"Total number of events: {count}")
-            event_details = "Name\tDate\tDescription\n"                                  # member details string with headings
-            event_details += "-" * 80 + "\n"                                                   # a separator line
+            event_details = "Name\tDate\tDescription\n"  # member details string with headings
+            event_details += "-" * 80 + "\n"  # a separator line
 
             for event in events:
                 event_details += (
                 f"{event.name}\t"
                 f"{event.event_date}\t"
-                f"{event.description}\n"                                           # adds spacing between members
+                f"{event.description}\n"  # adds spacing between members
                 )
-            self.event_details_text_edit.setPlainText(event_details)                          # Update the text area with members' details
+            self.event_details_text_edit.setPlainText(event_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
     def search_e_by_name(self):
         try:
             name, _ = QtWidgets.QInputDialog.getText(self, 'Search for Event', 'Event name:')
-            event = get_event_by_name(name)                                                  # returns the object instance found on the db
+            event = get_event_by_name(name)  # returns the object instance found on the db
             if event:
                 details = (
                     f"Name: {event.name}\n"
@@ -215,7 +215,7 @@ class EventsOperations(QtWidgets.QWidget):
                     f"Location: {event.location}\n"
                     f"Description: {event.description}"
                 )
-                self.event_details_text_edit.setPlainText(details)                                     # display event details on the text box
+                self.event_details_text_edit.setPlainText(details)  # display event details on the text box
             else:
                 self.event_details_text_edit.setPlainText("Event not found")
         except Exception as e:
@@ -225,7 +225,7 @@ class EventsOperations(QtWidgets.QWidget):
         try:
             event_date_str, _ = QtWidgets.QInputDialog.getText(self, 'Event Search', 'Date of Event (YYYY-MM-DD):')
             event_date = datetime.datetime.strptime(event_date_str, '%Y-%m-%d').date()            
-            event = get_event_by_date(event_date)                                                  # returns the object instance found on the db
+            event = get_event_by_date(event_date)  # returns the object instance found on the db
             if event:
                 details = (
                     f"Name: {event.name}\n"
@@ -235,14 +235,14 @@ class EventsOperations(QtWidgets.QWidget):
                     f"Location: {event.location}\n"
                     f"Description: {event.description}"
                 )
-                self.event_details_text_edit.setPlainText(details)                                     # display event details on the text box
+                self.event_details_text_edit.setPlainText(details)  # display event details on the text box
             else:
                 self.event_details_text_edit.setPlainText("Event not found")
         except Exception as e:
             self.event_details_text_edit.setPlainText(f"An error occurred: {e}")
 
     def add_event(self):
-            while True:                                                                 # Loop to allow retrying if needed
+            while True:  # loop to allow retrying if needed
                 try:
                     name, _ = QtWidgets.QInputDialog.getText(self, 'Add Event', 'First Name:')
                     event_date_str, _ = QtWidgets.QInputDialog.getText(self, 'Add Event', 'Date of Event (YYYY-MM-DD):')
@@ -264,7 +264,9 @@ class EventsOperations(QtWidgets.QWidget):
                 # avoid adding duplicates
                     existing_event = session.query(Event).filter_by(name=name, event_date=event_date).first()
                     if existing_event:
-                        response = QMessageBox.warning(self, 'Error', 'An event with this name and date already exists. Would you like to try again?', QMessageBox.Yes | QMessageBox.No)
+                        response = QMessageBox.warning(self, 'Error', 'An event with this \
+                                                        name and date already exists. Would you like to try again?',
+                                                       QMessageBox.Yes | QMessageBox.No)
                         if response == QMessageBox.No:
                             return
                         continue
@@ -408,30 +410,30 @@ class MemberOperations(QtWidgets.QWidget):
     def get_valid_integer(self, prompt):
                 while True:
                     text, ok = QtWidgets.QInputDialog.getText(self, 'Member Details', prompt)
-                    if ok:                                                        # Check if user pressed OK
+                    if ok:  # Check if user pressed OK
                         try:
-                            value = int(text)                                     # convert input into int
+                            value = int(text)  # convert input into int
                             return value
                         except ValueError:
                             QtWidgets.QMessageBox.warning(self, 'Input Error', 'Invalid input. Please enter a valid number.')
                     else:
                         return None                # If the dialog is canceled, return None or handle accordingly
 
-    def add_member(self):                                   # adjust read_members_from_txt and add_members_to_db to fit how the Google Form is expected
+    def add_member(self):  # adjust read_members_from_txt and add_members_to_db to fit how the Google Form is expected
         while True:                                                                 # Loop to allow retrying if needed
             try:
                 kind_of_adding, _ =  QtWidgets.QInputDialog.getItem(self, 'Adding Members', 'How would you like to add members', ['Upload a txt File', 'Input Details'])
                 if kind_of_adding == 'Upload a txt File':
                     try:
-                        def read_members_from_txt(file_path):                       # adjust len: depends on the txt doc
+                        def read_members_from_txt(file_path):   # adjust len: depends on the txt doc
                             members = []
                             try:
                                 with open(file_path, 'r') as file:
                                     lines = file.readlines()
                                     # Skip the header
                                     for line in lines[1:]:
-                                        parts = line.strip().split('|')                                      # choose the appropriate limmiter ',' or '|'
-                                        if len(parts) == 11:                                                 # number of columns
+                                        parts = line.strip().split('|')   # choose the appropriate limmiter ',' or '|'
+                                        if len(parts) == 11:   # number of columns
                                             first_name, last_name, email, phone_number, marital_status, children, family_at_home, occupation, education_level, involvement, disabilities = parts
                                             try:
                                                 members.append((first_name, last_name, email, phone_number, marital_status, children, family_at_home, occupation, education_level, involvement, disabilities))  # Allocate specific columns to members table
@@ -440,12 +442,12 @@ class MemberOperations(QtWidgets.QWidget):
                                                 QMessageBox.information(f"Skipping invalid line: {line.strip()}")
                             except IOError as e:
                                 QMessageBox.information(f"Error reading file: {e}")
-                            return members                 # allocate specific columns to members table
+                            return members  # allocate specific columns to members table
 
-                        def add_members_to_db(members):                             # adjust new_member and new_demographics columns: depends on members.append in read_members_from_txt  
+                        def add_members_to_db(members):  # adjust new_member and new_demographics columns: depends on members.append in read_members_from_txt  
                             try:
                                 for first_name, last_name, email, phone_number, marital_status, children, family_at_home, occupation, education_level, involvement, disabilities in members:
-                                    with session.begin():                                           # Begin a transaction
+                                    with session.begin():  # Begin a transaction
                                         new_member = Member(first_name=first_name, last_name=last_name, email=email, phone_number=phone_number)     
                                         session.add(new_member)
                                         # Commit here to get the new_member.id
@@ -527,7 +529,7 @@ class MemberOperations(QtWidgets.QWidget):
                             continue
 
                         marital_status, _ = QtWidgets.QInputDialog.getItem(self, 'Member Details', 'Marital Status:', ['Married', 'Never Married', 'Divorced', 'Widowed'])
-                        children = self.get_valid_integer('How many children do you have:')                             # calls the get_valid_integer func passing the phrase
+                        children = self.get_valid_integer('How many children do you have:')  # calls the get_valid_integer func passing the phrase
                         family_at_home = self.get_valid_integer('Number of people at home:')
                         occupation, _ = QtWidgets.QInputDialog.getItem(self, 'Member Details', 'Occupation:')
                         education_level, _ = QtWidgets.QInputDialog.getItem(self, 'Member Details', 'Education Level:', ['Before Matric', 'Passed Matric', 'College', 'Bachelors Degree', 'Post Grad'])
@@ -536,7 +538,7 @@ class MemberOperations(QtWidgets.QWidget):
                         disabilities, _ = QtWidgets.QInputDialog.getItem(self, 'Member Details', 'Disabilities:', ['Yes', 'No'])
 
                         session.add(member)
-                        session.commit()                            # commit here so we can have member ID to link in demogs
+                        session.commit()   # commit here so we can have member ID to link in demogs
 
                         demogs = Demographics(
                             marital_status=marital_status,
@@ -547,7 +549,7 @@ class MemberOperations(QtWidgets.QWidget):
                             attendance=attendance,
                             involvement=involvement,
                             disabilities=disabilities,
-                            member_id=member.id                     # Link demographics to the newly created member
+                            member_id=member.id   # Link demographics to the newly created member
                         )
             
                         session.add(demogs)
@@ -681,29 +683,29 @@ class QueryOperations(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout(self)
 
 
-        ### search results are displayed here  ###
+        # search results are displayed here
         # no label
         # text areas to display responses
         self.member_count_label = QtWidgets.QLabel('Number of members: ', self)
-        self.member_count_label.setStyleSheet("font-size: 16px;")                              # no need to make it stand out
-        self.member_count_label.setStyleSheet("background-color: white;")                # Set background to white NOT WORKING, ADJUST .qss file
+        self.member_count_label.setStyleSheet("font-size: 16px;")  # no need to make it stand out
+        self.member_count_label.setStyleSheet("background-color: white;")  # Set background to white NOT WORKING, ADJUST .qss file
         self.layout.addWidget(self.member_count_label, alignment=QtCore.Qt.AlignCenter)
         
         self.member_details_text_edit = QtWidgets.QTextEdit(self)
         self.member_details_text_edit.setReadOnly(True)
-        self.member_details_text_edit.setStyleSheet("background-color: white;")                # Set background to white NOT WORKING, ADJUST .qss file
+        self.member_details_text_edit.setStyleSheet("background-color: white;")  # Set background to white NOT WORKING, ADJUST .qss file
         self.member_details_text_edit.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout.addWidget(self.member_details_text_edit, alignment=QtCore.Qt.AlignCenter)
 
-        ### member search operations ###
+        """ member search operations """
         # label 1
         self.first_section_label = QtWidgets.QLabel('Member Search', self)
-        self.first_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")           # Make it stand out
-        self.first_section_label.setAlignment(QtCore.Qt.AlignCenter)                            # Center the text
+        self.first_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")  # Make it stand out
+        self.first_section_label.setAlignment(QtCore.Qt.AlignCenter)  # Center the text
         self.layout.addWidget(self.first_section_label, alignment=QtCore.Qt.AlignCenter)
 
         # buttons
-        button_layout = QtWidgets.QHBoxLayout()                                                 # 
+        button_layout = QtWidgets.QHBoxLayout()                                                 
 
         # searches
         self.show_all_button = QtWidgets.QPushButton('Show All Members', self)
@@ -717,7 +719,7 @@ class QueryOperations(QtWidgets.QWidget):
         button_layout.addWidget(self.search_by_name_button)
 
         self.search_by_email_button = QtWidgets.QPushButton('Search By Email', self)
-        self.search_by_email_button.setMinimumWidth(150)                                        # Ensure the button is wide enough
+        self.search_by_email_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.search_by_email_button.clicked.connect(self.search_by_email)
         button_layout.addWidget(self.search_by_email_button)
 
@@ -725,8 +727,8 @@ class QueryOperations(QtWidgets.QWidget):
 
         # label2
         self.sec_section_label = QtWidgets.QLabel('Stats Section', self)
-        self.sec_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")           # Make it stand out
-        self.sec_section_label.setAlignment(QtCore.Qt.AlignCenter)                            # Center the text
+        self.sec_section_label.setStyleSheet("font-weight: bold; font-size: 16px;")  # Make it stand out
+        self.sec_section_label.setAlignment(QtCore.Qt.AlignCenter)   # Center the text
         self.layout.addWidget(self.sec_section_label, alignment=QtCore.Qt.AlignCenter)
 
         # buttons
@@ -734,27 +736,27 @@ class QueryOperations(QtWidgets.QWidget):
 
         # one-clicks
         self.married_button = QtWidgets.QPushButton('Married Members', self)
-        self.married_button.setMinimumWidth(150)                                                   # Ensure the button is wide enough
+        self.married_button.setMinimumWidth(150)   # Ensure the button is wide enough
         self.married_button.clicked.connect(self.member_married)
         button_layout2.addWidget(self.married_button)
 
         self.search_m_with_kids_button = QtWidgets.QPushButton('Members With Children', self)
-        self.search_m_with_kids_button.setMinimumWidth(150)                                        # Ensure the button is wide enough
+        self.search_m_with_kids_button.setMinimumWidth(150)   # Ensure the button is wide enough
         self.search_m_with_kids_button.clicked.connect(self.member_with_children)
         button_layout2.addWidget(self.search_m_with_kids_button)
 
         self.search_uneduc_button = QtWidgets.QPushButton('Uneducated Members', self)
-        self.search_uneduc_button.setMinimumWidth(150)                                             # Ensure the button is wide enough
+        self.search_uneduc_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.search_uneduc_button.clicked.connect(self.uneduc_members)
         button_layout2.addWidget(self.search_uneduc_button)
 
         self.search_disabled_m_button = QtWidgets.QPushButton('Disabled Members', self)
-        self.search_disabled_m_button.setMinimumWidth(150)                                           # Ensure the button is wide enough
+        self.search_disabled_m_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.search_disabled_m_button.clicked.connect(self.members_disabled)
         button_layout2.addWidget(self.search_disabled_m_button)
 
         self.search_officers_button = QtWidgets.QPushButton('Servers/Annointed Members', self)
-        self.search_officers_button.setMinimumWidth(150)                                           # Ensure the button is wide enough
+        self.search_officers_button.setMinimumWidth(150)  # Ensure the button is wide enough
         self.search_officers_button.clicked.connect(self.officers_servers)
         button_layout2.addWidget(self.search_officers_button)
 
@@ -765,29 +767,28 @@ class QueryOperations(QtWidgets.QWidget):
         self.layout.addWidget(self.back_button, alignment=QtCore.Qt.AlignCenter)
 
         self.setLayout(self.layout)
-
         
     def go_back(self):
         session.rollback()
-        self.member_count_label.setText('Number of members: ')                                  # reverts
-        self.member_details_text_edit.clear()                                                   # Clear the text edit area
+        self.member_count_label.setText('Number of members: ')   # reverts
+        self.member_details_text_edit.clear()  # Clear the text edit area
         self.main_window.go_back()
 
-    # searches
+    """ searches """
     def show_all_members(self):
         try:
-            members, count = get_all_members()                                                  # the function returns two things: member list and count
+            members, count = get_all_members()  # the function returns two things: member list and count
             self.member_count_label.setText(f"Total number of members: {count}")
-            member_details = "Name\tPhone Number\tJoin Date\n"                                  # member details string with headings
-            member_details += "-" * 80 + "\n"                                                   # a separator line
+            member_details = "Name\tPhone Number\tJoin Date\n"  # member details string with headings
+            member_details += "-" * 80 + "\n"  # a separator line
 
             for member in members:
                 member_details += (
                 f"{member.id}\t"
                 f"{member.first_name} {member.last_name}\t"
-                f"{member.join_date}\n"                                           # adds spacing between members
+                f"{member.join_date}\n"  # adds spacing between members
                 )
-            self.member_details_text_edit.setPlainText(member_details)                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(member_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
@@ -795,7 +796,7 @@ class QueryOperations(QtWidgets.QWidget):
         try:
             fname, _ = QtWidgets.QInputDialog.getText(self, 'Search for Member', 'First Name:')
             lname, _ = QtWidgets.QInputDialog.getText(self, 'Search for Member', 'Last Name:')
-            member = get_member_by_names(fname, lname)                                                  # returns the object instance found on the db
+            member = get_member_by_names(fname, lname)  # returns the object instance found on the db
             if member:
                 details = (
                     f"Name: {member.first_name} {member.last_name}\n"
@@ -804,7 +805,7 @@ class QueryOperations(QtWidgets.QWidget):
                     f"Address: {member.address}\n"
                     f"Join Date: {member.join_date}"
                 )
-                self.member_details_text_edit.setPlainText(details)                                     # display member details on the text box
+                self.member_details_text_edit.setPlainText(details)  # display member details on the text box
             else:
                 self.member_details_text_edit.setPlainText("Member not found")
         except Exception as e:
@@ -813,7 +814,7 @@ class QueryOperations(QtWidgets.QWidget):
     def search_by_email (self):
         try:
             email, _ = QtWidgets.QInputDialog.getText(self, 'Search for Member', 'Email:')
-            member = get_member_by_email(email)                                                  # returns the object instance found on the db
+            member = get_member_by_email(email)   # returns the object instance found on the db
             if member:
                 details = (
                     f"Name: {member.first_name} {member.last_name}\n"
@@ -822,7 +823,7 @@ class QueryOperations(QtWidgets.QWidget):
                     f"Address: {member.address}\n"
                     f"Join Date: {member.join_date}"
                 )
-                self.member_details_text_edit.setPlainText(details)                                     # display member details on the text box
+                self.member_details_text_edit.setPlainText(details)  # display member details on the text box
             else:
                 self.member_details_text_edit.setPlainText("Member not found")
         except Exception as e:
@@ -831,107 +832,93 @@ class QueryOperations(QtWidgets.QWidget):
     # queries
     def member_married(self):
         try:
-            members, count = married_members()                                                  # the function returns two things: member list and count
+            members, count = married_members()   # the function returns two things: member list and count
             self.member_count_label.setText(f"Total number of members: {count}")
-            member_details = "Member ID\tName\tJoin Date\n"                                     # member details string with headings
-            member_details += "-" * 80 + "\n"                                                   # a separator line
+            member_details = "Member ID\tName\tJoin Date\n"  # member details string with headings
+            member_details += "-" * 80 + "\n"   # a separator line
             for member in members:
                 member_details += (
                 f"{member.id}\t"
                 f"{member.first_name} {member.last_name}\t"
-                f"{member.join_date}\n\n"                                                       # adds spacing between members
+                f"{member.join_date}\n\n"   # adds spacing between members
                 )
-            self.member_details_text_edit.setPlainText(member_details)                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(member_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
     def member_with_children(self):
         try:
-            members, count = children_query()                                                  # the function returns two things: member list and count
+            members, count = children_query()   # the function returns two things: member list and count
             self.member_count_label.setText(f"Total number of members: {count}")
-            member_details = "Member ID\tName\tNumber of children\n"                                     # member details string with headings
-            member_details += "-" * 80 + "\n"                                                   # a separator line
+            member_details = "Member ID\tName\tNumber of children\n"  # member details string with headings
+            member_details += "-" * 80 + "\n"  # a separator line
             for member in members:
                 member_details += (
-                    f"{member[0]}\t"                                                            # member.id
-                    f"{member[1]} {member[2]}\t"                                                # member.first_name and member.last_name
-                    f"{member[3]}\n\n"                                                          # member.children
+                    f"{member[0]}\t"  # member.id
+                    f"{member[1]} {member[2]}\t"  # member.first_name and member.last_name
+                    f"{member[3]}\n\n"   # member.children
             )
-            self.member_details_text_edit.setPlainText(member_details)                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(member_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
     def uneduc_members(self):
         try:
-            members, count = uneducated_members()                                               # the function returns two things: member list and count
+            members, count = uneducated_members()  # the function returns two things: member list and count
             self.member_count_label.setText(f"Number of uneducated members: {count}")
-            member_details = "Member ID\tName\tPhone Number\n"                                     # member details string with headings
-            member_details += "-" * 80 + "\n"                                                   # a separator line
+            member_details = "Member ID\tName\tPhone Number\n"  # member details string with headings
+            member_details += "-" * 80 + "\n"  # a separator line
             for member in members:
                 member_details += (
-                    f"{member[0]}\t"                                                            # member.id
-                    f"{member[1]} {member[2]}\t"                                                # member.first_name and member.last_name
-                    f"{member[3]}\n\n"                                                          # member.children
+                    f"{member[0]}\t"  # member.id
+                    f"{member[1]} {member[2]}\t"  # member.first_name and member.last_name
+                    f"{member[3]}\n\n"  # member.children
             )
-            self.member_details_text_edit.setPlainText(member_details)                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(member_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
     def members_disabled(self):
         try:
-            members, count = disabled_members()                                               # the function returns two things: member list and count
+            members, count = disabled_members()  # the function returns two things: member list and count
             self.member_count_label.setText(f"Number of disabled members: {count}")
-            member_details = "Member ID\tName\tPhone Number\n"                                     # member details string with headings
-            member_details += "-" * 80 + "\n"                                                   # a separator line
+            member_details = "Member ID\tName\tPhone Number\n"  # member details string with headings
+            member_details += "-" * 80 + "\n"  # a separator line
             for member in members:
                 member_details += (
-                    f"{member[0]}\t"                                                            # member.id
-                    f"{member[1]} {member[2]}\t"                                                # member.first_name and member.last_name
-                    f"{member[3]}\n\n"                                                          # member.phone number
+                    f"{member[0]}\t"   # member.id
+                    f"{member[1]} {member[2]}\t"  # member.first_name and member.last_name
+                    f"{member[3]}\n\n"  # member.phone number
             )
-            self.member_details_text_edit.setPlainText(member_details)                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(member_details)  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
 
     def officers_servers(self):
         try:
-            servers, officers, count, count2 = office_bearers()                                               # the function returns four things: 2x member list and 2x count
+            servers, officers, count, count2 = office_bearers()  # the function returns four things: 2x member list and 2x count
             self.member_count_label.setText(f"Number of Servers: {count}\nNumber of Annointed Members: {count2}")
-            server_details = "Member ID\tName\tPhone Number\tRole\n"                                     # member details string with headings
-            officer_details = ""                                                                   # member details with no headings
-            server_details += "-" * 80 + "\n"                                                   # a separator line
-            officer_details += "-" * 80 + "\n"                                                   # a separator line
+            server_details = "Member ID\tName\tPhone Number\tRole\n"  # member details string with headings
+            officer_details = ""  # member details with no headings
+            server_details += "-" * 80 + "\n"  # a separator line
+            officer_details += "-" * 80 + "\n"  # a separator line
             for member in servers:
                 server_details += (
-                    f"{member[0]}\t"                                                            # member.id
-                    f"{member[1]} {member[2]}\t"                                                # member.first_name and member.last_name
-                    f"{member[3]}\t"                                                            # member.phone number
-                    f"{member[4]}\n\n"                                                          # demo.involvement
+                    f"{member[0]}\t"  # member.id
+                    f"{member[1]} {member[2]}\t"  # member.first_name and member.last_name
+                    f"{member[3]}\t"  # member.phone number
+                    f"{member[4]}\n\n"  # demo.involvement
             )
             for member in officers:
                 officer_details += (
-                    f"{member[0]}\t"                                                            # member.id
-                    f"{member[1]} {member[2]}\t"                                                # member.first_name and member.last_name
-                    f"{member[3]}\t"                                                            # member.phone number
-                    f"{member[4]}\n\n"                                                          # demo.involvement
+                    f"{member[0]}\t"  # member.id
+                    f"{member[1]} {member[2]}\t"  # member.first_name and member.last_name
+                    f"{member[3]}\t"  # member.phone number
+                    f"{member[4]}\n\n"  # demo.involvement
             )
-            self.member_details_text_edit.setPlainText(f"{server_details}\n\n{officer_details}")                          # Update the text area with members' details
+            self.member_details_text_edit.setPlainText(f"{server_details}\n\n{officer_details}")  # Update the text area with members' details
         except RuntimeError as e:
             QtWidgets.QMessageBox.critical(self, 'Error', str(e))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
    # def query_members(self):
    #     try:
@@ -942,19 +929,15 @@ class QueryOperations(QtWidgets.QWidget):
    #         logging.error(f'Failed to query members: {e}', exc_info=True)
    #         QMessageBox.warning(self, 'Error', f'Failed to query members: {e}')
 
-
-
-
 """ styling using style sheets """
 def apply_stylesheet(app):
     with open("stylesheet.qss", "r") as file:          
         qss = file.read()
         app.setStyleSheet(qss)
 
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    apply_stylesheet(app)                           # Apply the stylesheet
+    apply_stylesheet(app)  # Apply the stylesheet
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
