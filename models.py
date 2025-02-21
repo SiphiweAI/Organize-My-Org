@@ -12,13 +12,6 @@ engine = create_engine(DATABASE_URL, echo=True)
 # Define a base class for models
 Base = declarative_base()
 
-
-"""
-- MembershipStatus: necessary??
-
-"""
-
-
 ###################################################################
 
 """Define enumerations"""
@@ -27,6 +20,7 @@ class Gender(enum.Enum):
     Female = "Female"
     Other = "Other"
 
+# might not be necessary, client will decide
 class MembershipStatus(enum.Enum):
     Active = "Active"
     Inactive = "Inactive"
@@ -72,7 +66,7 @@ class Event(Base):
     location = Column(String(100), nullable=False)
     description = Column(Text)
 
-class Member(Base):                             # revise what can/cannot be nullable
+class Member(Base):  # revise what can/cannot be nullable
     __tablename__ = 'members'
     id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String(50), nullable=False)
@@ -96,8 +90,8 @@ class Demographics(Base):
     marital_status = Column(Enum(Marital_Status))
     children = Column(Integer, nullable=False)
     family_at_home = Column(Integer, nullable=False)
-    #family_at_church = Column()                                                revisit
-    occupation = Column(String(90))                                             # leave blank if not employed
+    #family_at_church = Column()   must revisit
+    occupation = Column(String(90))  # leave blank if not employed
     education_level = Column(Enum(EducationLevel))
     attendance = Column(Enum(AttendanceLevel))
     involvement = Column(Enum(Involvement))
@@ -132,14 +126,14 @@ Base.metadata.create_all(engine)
 
 
 """ Queries """
-def get_all_events():                                                  # no parms because its '.all()'
+def get_all_events():  # no parms because its '.all()'
     try:
         result = session.query(Event).all()
         count = len(result)
         return result, count
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve events: {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve events: {e}")  # exception to be handled by the caller
 
 def get_event_by_name(ename):
     try:
@@ -150,7 +144,7 @@ def get_event_by_name(ename):
             raise RuntimeError(f"event with name '{ename}' not found")
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve event with name '{ename}': {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve event with name '{ename}': {e}")  # exception to be handled by the caller
 
 def get_event_by_date(date):
     try:
@@ -161,16 +155,16 @@ def get_event_by_date(date):
             raise RuntimeError(f"event with date '{date}' not found")
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve event with date '{date}': {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve event with date '{date}': {e}")  # exception to be handled by the caller
 
-def get_all_members():                                                  # no parms because its '.all()'
+def get_all_members():  # no parms because its '.all()'
     try:
         result = session.query(Member).all()
         count = len(result)
         return result, count
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve members: {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve members: {e}")  # exception to be handled by the caller
 
 def get_member_by_email(email):
     try:
@@ -178,7 +172,7 @@ def get_member_by_email(email):
         return result
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve member with email '{email}': {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve member with email '{email}': {e}")  # exception to be handled by the caller
 
 def get_member_by_names(fname, lname ):
     try:
@@ -186,14 +180,14 @@ def get_member_by_names(fname, lname ):
         return result
     except Exception as e:
         print(f"An error occurred: {e}")                                
-        raise RuntimeError(f"Failed to retrieve member with names '{fname, lname}': {e}")          # Raise an exception to be handled by the caller
+        raise RuntimeError(f"Failed to retrieve member with names '{fname, lname}': {e}")  # exception to be handled by the caller
 
 def married_members():
     try:
         married_members_query = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.marital_status == 'Married').all()
-        result = [(member.id, member.first_name, member.last_name, member.join_date)       # Create a list of tuples (id, name, surname)
+        result = [(member.id, member.first_name, member.last_name, member.join_date)  # a list of tuples (id, name, surname)
                 for demo, member in married_members_query]    
         count = len(result)
         return result, count
@@ -205,9 +199,9 @@ def children_query():
     try:
         c_query = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
-            filter(Demographics.children >= 1).all()                        # greater or equal to 1
-        result = [(member.id, member.first_name, member.last_name, demo.children)       # Create a list of tuples (id, name, surname)
-                for demo, member in c_query]                       # demo refers to results from Demographics table, unused in this case  
+            filter(Demographics.children >= 1).all()  # greater or equal to 1
+        result = [(member.id, member.first_name, member.last_name, demo.children)  # Create a list of tuples (id, name, surname)
+                for demo, member in c_query]  # demo refers to results from Demographics table, unused in this case  
         count = len(result)
         return result, count
     except Exception as e:
@@ -219,7 +213,7 @@ def uneducated_members():
         uneducated_membs = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.education_level == 'Before Matric').all()
-        result = [(member.id, member.first_name, member.last_name, member.phone_number)       # Create a list of tuples (id, name, surname)
+        result = [(member.id, member.first_name, member.last_name, member.phone_number)  # Create a list of tuples (id, name, surname)
                 for demo, member in uneducated_membs]    
         count = len(result)
         return result, count
@@ -232,7 +226,7 @@ def educated_members():
         educated_membs = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.education_level != 'Before Matric').all()
-        result = [(member.id, member.first_name, member.last_name, member.phone_number)       # Create a list of tuples (id, name, surname)
+        result = [(member.id, member.first_name, member.last_name, member.phone_number)  # Create a list of tuples (id, name, surname)
                 for demo, member in educated_membs]    
         count = len(result)
         return result, count
@@ -245,7 +239,7 @@ def disabled_members():
         members_with_disabilities = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.disabilities == 'Yes').all()
-        result = [(member.id, member.first_name, member.last_name, member.phone_number)       # Create a list of tuples (id, name, surname and phone number)
+        result = [(member.id, member.first_name, member.last_name, member.phone_number)  # Create a list of tuples (id, name, surname and phone number)
                 for demo, member in members_with_disabilities]    
         count = len(result)
         return result, count
@@ -258,12 +252,12 @@ def office_bearers():
         servers = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.involvement == 'Server').all()
-        result = [(member.id, member.first_name, member.last_name, member.phone_number, demo.involvement)       # Create a list of tuples (id, name, surname, phone number and office)
+        result = [(member.id, member.first_name, member.last_name, member.phone_number, demo.involvement)  # Create a list of tuples (id, name, surname, phone number and office)
                 for demo, member in servers] 
         officers = session.query(Demographics, Member).\
             join(Member, Demographics.member_id == Member.id).\
             filter(Demographics.involvement == 'Officer').all()
-        result2 = [(member.id, member.first_name, member.last_name, member.phone_number, demo.involvement)       # Create a list of tuples (id, name, surname, phone number and office)
+        result2 = [(member.id, member.first_name, member.last_name, member.phone_number, demo.involvement)  # Create a list of tuples (id, name, surname, phone number and office)
                 for demo, member in officers] 
         count = len(result)
         count2 = len(result2)
