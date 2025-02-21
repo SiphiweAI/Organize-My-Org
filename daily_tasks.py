@@ -13,9 +13,9 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Twilio setup
-TWILIO_ACCOUNT_SID = 'your_account_sid'
-TWILIO_AUTH_TOKEN = 'your_auth_token'
-TWILIO_WHATSAPP_NUMBER = 'whatsapp:+your_twilio_whatsapp_number'
+TWILIO_ACCOUNT_SID = 'account_sid'
+TWILIO_AUTH_TOKEN = 'auth_token'
+TWILIO_WHATSAPP_NUMBER = 'whatsapp:+twilio_whatsapp_number'
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def send_whatsapp_message(to_number, message):
@@ -40,8 +40,8 @@ def send_reminders():
         reminder_message = f"Reminder: The event '{event.name}' is scheduled for {event.event_date} at {event.start_time}."
         # Here you might send this message to all members
         return reminder_message
-    phone_numbs = session.query(Member.phone_number).all()             # returns a tuple of all the phone numbers
-    phone_numbers = [number[0] for number in phone_numbs]                             # convert the result (tuple) to a list of phone numbers
+    phone_numbs = session.query(Member.phone_number).all()  # returns a tuple of all the phone numbers
+    phone_numbers = [number[0] for number in phone_numbs]  # convert the result (tuple) to a list of phone numbers
     send_whatsapp_message(phone_numbers, reminder_message)
 
 
